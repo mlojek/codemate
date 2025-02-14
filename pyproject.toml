@@ -1,0 +1,24 @@
+[project]
+name = "codemate"
+version = "1"
+authors = [
+  { name="mlojek", email="marcin.lojek@pw.edu.pl" },
+]
+description = "LLM-powered CLI tool to help software developers"
+readme = "README.md"
+requires-python = ">=3.11.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "isort",
+    "black",
+    "pylint",
+    "langchain",
+    "pre-commit"
+]
+
+[project.urls]
+Homepage = "https://github.com/mlojek/codemate"
