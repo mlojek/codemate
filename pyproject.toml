@@ -17,7 +17,12 @@ dependencies = [
     "black",
     "pylint",
     "langchain",
-    "pre-commit"
+    "langchain-community",
+    "langchain-google-genai",
+    "google-generativeai",
+    "openai",
+    "pre-commit",
+    "python-dotenv"
 ]
 
 [project.urls]
