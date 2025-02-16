@@ -25,10 +25,10 @@ if __name__ == "__main__":
         "source_file", type=Path, help="Path to the source file to work on."
     )
     parser.add_argument(
-        "--from_line", default=0, help="The line number in the source file to start from."
+        "--from_line", type=int, default=0, help="The line number in the source file to start from."
     )
     parser.add_argument(
-        "--to_line", default=-1, help="The line number in the source file to end at."
+        "--to_line", type=int, default=-1, help="The line number in the source file to end at."
     )
     parser.add_argument(
         "--api",
@@ -66,8 +66,12 @@ if __name__ == "__main__":
 
     # create prompt template
     system_message_template = PromptTemplate.from_template(
-        "You are a bot that performs operations on source code. Your task is to {detailed_instruction} the source code. You shall return only source code and no comments.",
+        "You are a bot that performs operations on source code. "\
+        "Your task is to {detailed_instruction} the source code. "\
+        "You shall return only source code.",
     )
+
+    print(system_message_template.format(detailed_instruction='debug'))
 
     instructions = {
         'refactor': 'refactor',
