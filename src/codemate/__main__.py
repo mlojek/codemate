@@ -7,8 +7,8 @@ import os
 from pathlib import Path
 
 from dotenv import load_dotenv
-from langchain import PromptTemplate
-from langchain.schema import AIMessage, HumanMessage, SystemMessage
+from langchain.schema import HumanMessage, SystemMessage
+from langchain_core.prompts import PromptTemplate
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_openai import ChatOpenAI
 
@@ -18,17 +18,23 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "action",
-        choices=["refactor", "explain", "document", "init"],
+        choices=["refactor", "explain", "document", "insert"],
         help="Action that the assistant should take.",
     )
     parser.add_argument(
         "source_file", type=Path, help="Path to the source file to work on."
     )
     parser.add_argument(
-        "--from_line", type=int, default=0, help="The line number in the source file to start from."
+        "--from_line",
+        type=int,
+        default=0,
+        help="The line number in the source file to start from.",
     )
     parser.add_argument(
-        "--to_line", type=int, default=-1, help="The line number in the source file to end at."
+        "--to_line",
+        type=int,
+        default=None,
+        help="The line number in the source file to end at.",
     )
     parser.add_argument(
         "--api",
@@ -43,12 +49,10 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    print(f"Selected option {args.action} on file {args.source_file}")
-
     # read the configfile
     assert load_dotenv(
         Path.home() / ".codemate"
-    ), "Could not find ~/.codemate config file. Run codemate init!"
+    ), "Could not find ~/.codemate config file."
 
     # fav_llm in config
     match args.api:
@@ -61,29 +65,29 @@ if __name__ == "__main__":
 
     # read the source file
     with open(args.source_file, "r", encoding="utf-8") as file_handle:
-        source_file_content = file_handle.read().split("\n")
-    print(source_file_content)
+        source_file_content = file_handle.read().splitlines()
 
     # create prompt template
     system_message_template = PromptTemplate.from_template(
-        "You are a bot that performs operations on source code. "\
-        "Your task is to {detailed_instruction} the source code. "\
+        "You are a bot that performs operations on source code. "
+        "Your task is to {detailed_instruction} the source code. "
         "You shall return only source code.",
     )
 
-    print(system_message_template.format(detailed_instruction='debug'))
-
     instructions = {
-        'refactor': 'refactor',
-        "document": 'add docstrings and typehints to',
-        'explain': 'add explaination comments to'
+        "refactor": "refactor",
+        "document": "add docstrings and typehints to",
+        "explain": "add explaination comments to",
+        "insert": "add code according to the comments",
     }
 
     messages = [
-        SystemMessage(content=system_message_template.format(detailed_instruction=instructions[args.action])),
-        HumanMessage(
-            content=source_file_content[args.from_line: args.to_line]
+        SystemMessage(
+            content=system_message_template.format(
+                detailed_instruction=instructions[args.action]
+            )
         ),
+        HumanMessage(content=source_file_content[args.from_line : args.to_line]),
     ]
 
     # prompt the llm
@@ -93,10 +97,11 @@ if __name__ == "__main__":
     if args.inplace:
         source_file_new_content = (
             source_file_content[: args.from_line]
-            + llm_response.content
-            + source_file_content[args.to_line:]
+            + llm_response.content.splitlines()
+            + source_file_content[args.to_line :]
         )
-        # TODO append response content to source file
-        pass
+        print("\n".join(llm_response.content.splitlines()))
+        with open(args.source_file, "w", encoding="utf-8") as file_handle:
+            file_handle.write("\n".join(source_file_new_content))
     else:
-        print(llm_response.content)
+        print("\n".join(llm_response.content.splitlines()[1:-1]))
