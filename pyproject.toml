@@ -22,7 +22,8 @@ dependencies = [
     "google-generativeai",
     "openai",
     "pre-commit",
-    "python-dotenv"
+    "python-dotenv",
+    "langchain_openai"
 ]
 
 [project.urls]
