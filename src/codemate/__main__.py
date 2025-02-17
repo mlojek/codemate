@@ -42,6 +42,7 @@ if __name__ == "__main__":
         default="gemini",
         help="Which LLM API to use.",
     )
+    parser.add_argument("--model", type=str, help="Name of LLM to use.")
     parser.add_argument(
         "--inplace",
         action="store_true",
@@ -54,14 +55,16 @@ if __name__ == "__main__":
         Path.home() / ".codemate"
     ), "Could not find ~/.codemate config file."
 
-    # fav_llm in config
+    # create llm instance
     match args.api:
         case "gemini":
+            model_name = args.model or os.getenv("GEMINI_FAV_MODEL", "gemini-1.5-pro")
             llm = ChatGoogleGenerativeAI(
-                model="gemini-1.5-pro", google_api_key=os.getenv("GEMINI_API_KEY")
+                model=model_name, google_api_key=os.getenv("GEMINI_API_KEY")
             )
         case "openai":
-            llm = ChatOpenAI(model="gpt-4o", api_key=os.getenv("OPENAI_API_KEY"))
+            model_name = args.model or os.getenv("OPENAI_FAV_MODEL", "gpt-4o")
+            llm = ChatOpenAI(model=model_name, api_key=os.getenv("OPENAI_API_KEY"))
 
     # read the source file
     with open(args.source_file, "r", encoding="utf-8") as file_handle:
@@ -105,7 +108,6 @@ if __name__ == "__main__":
             + llm_response_split
             + source_file_content[args.to_line :]
         )
-        print("\n".join(llm_response.content.splitlines()))
         with open(args.source_file, "w", encoding="utf-8") as file_handle:
             file_handle.write("\n".join(source_file_new_content))
     else:
