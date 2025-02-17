@@ -20,9 +20,39 @@ OPENAI_API_KEY = 'your api key goes here'
 OPENAI_FAV_MODEL = 'name of the default model'
 ```
 
-## Using codemate
+## Functionalities
+Codemate allows for a few useful actions to be done:  
+🔧 `refactor` - Refactor the source code.  
+🧑‍🏫 `explain` - Add explainatory comments.  
+📖 `document` - Add docstrings and typehints.  
+🪄 `insert` - Create new piece of code according to comments.  
+
+## How to use codemate
 After installation, codemate can be called by it's CLI interface:
 ```
-TODO
+usage: python -m codemate [-h] [--from_line FROM_LINE] [--to_line TO_LINE] [--api {gemini,openai}] [--model MODEL] [--inplace] {refactor,explain,document,insert} source_file
+
+Codemate: LLM-powered software developer assistant.
+
+positional arguments:
+  {refactor,explain,document,insert}
+                        Action that the assistant should take.
+  source_file           Path to the source file to work on.
+
+options:
+  -h, --help            show this help message and exit
+  --from_line FROM_LINE
+                        The line number (starting from 0) in the source file to start from.
+  --to_line TO_LINE     The line number (starting from 0) in the source file to end before (this line is not included).
+  --api {gemini,openai}
+                        Which LLM API to use.
+  --model MODEL         Name of LLM to use.
+  --inplace             If used the result will be pasted into the source file instead of the console.
 ```
-TODO examples
+
+## Examples
+If you would like to refactor a whole `script.file` and append the results to the file, run:
+```
+python -m codemate refactor script.file --inplace
+```
+
