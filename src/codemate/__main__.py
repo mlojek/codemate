@@ -33,7 +33,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--to_line",
         type=int,
-        default=None,
+        default=-1,
         help="The line number in the source file to end at.",
     )
     parser.add_argument(
@@ -93,15 +93,20 @@ if __name__ == "__main__":
     # prompt the llm
     llm_response = llm.invoke(messages)
 
+    # remove markdown code block artifacts
+    llm_response_split = [
+        line for line in llm_response.content.splitlines() if not line.startswith("```")
+    ]
+
     # append the result to the source file
     if args.inplace:
         source_file_new_content = (
             source_file_content[: args.from_line]
-            + llm_response.content.splitlines()
+            + llm_response_split
             + source_file_content[args.to_line :]
         )
         print("\n".join(llm_response.content.splitlines()))
         with open(args.source_file, "w", encoding="utf-8") as file_handle:
             file_handle.write("\n".join(source_file_new_content))
     else:
-        print("\n".join(llm_response.content.splitlines()[1:-1]))
+        print("\n".join(llm_response_split))
