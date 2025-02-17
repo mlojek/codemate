@@ -51,8 +51,20 @@ options:
 ```
 
 ## Examples
-If you would like to refactor a whole `script.file` and append the results to the file, run:
+You will find `test.py` file in this repository to try out codemate.  
+To add `divide` function according to comments, run:
 ```
-python -m codemate refactor script.file --inplace
+python -m codemate insert test.py --from_line 11 --to_line 14 --inplace
 ```
-
+Then to refactor the whole script:
+```
+python -m codemate refactor test.py --inplace
+```
+Add docstrings and typehints:
+```
+python -m codemate document test.py --inplace
+```
+Finally, if you don't understand what the script does, add explainatory comments:
+```
+python -m codemate explain test.py --inplace
+```
