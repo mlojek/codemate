@@ -14,7 +14,8 @@ from langchain_openai import ChatOpenAI
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        "Codemate: LLM-powered software developer assistant."
+        description="Codemate: LLM-powered software developer assistant.",
+        prog="python -m codemate",
     )
     parser.add_argument(
         "action",
@@ -28,13 +29,13 @@ if __name__ == "__main__":
         "--from_line",
         type=int,
         default=0,
-        help="The line number in the source file to start from.",
+        help="The line number (starting from 0) in the source file to start from.",
     )
     parser.add_argument(
         "--to_line",
         type=int,
         default=-1,
-        help="The line number in the source file to end at.",
+        help="The line number (starting from 0) in the source file to end before.",
     )
     parser.add_argument(
         "--api",
